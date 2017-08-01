@@ -3,6 +3,7 @@ import NotFound from './views/404.vue'
 import Home from './views/Home.vue'
 import User from './views/nav1/User.vue'
 import Module from './views/nav2/Module.vue'
+import UserModule from './views/nav3/UserModule.vue'
 
 
 
@@ -29,7 +30,7 @@ let routes = [
         path: '/YDManager',
         component: Home,
         name: '用户',
-        // leaf: true,
+        leaf: true,
         iconCls: 'el-icon-message',//图标样式class
         children: [
             { path: 'user', component: User, name: '用户' },
@@ -42,6 +43,7 @@ let routes = [
         path: '/YDManager',
         component: Home,
         name: '模块',
+        leaf: true,
         iconCls: 'fa fa-id-card-o',
         children: [
             { path: 'module', component: Module, name: '模块' },
@@ -51,11 +53,12 @@ let routes = [
     {
         path: '/YDManager',
         component: Home,
-        name: '',
+        name: '用户模块',
         iconCls: 'fa fa-address-card',
-        leaf: true,//只有一个节点
+        // leaf: true,//只有一个节点
         children: [
-            { path: '/YDManager/page6', component: Page6, name: '导航三' }
+            { path: 'user-module', component: UserModule, name: '关系' },
+            { path: 'user-module', component: UserModule, name: '用户-模块' },
         ]
     },
     {
@@ -76,6 +79,11 @@ let routes = [
         path: '/YDManager/index.html',
         hidden: true,
         redirect: { path: '/YDManager/user' }
+    },
+    {
+        path: '/YDManager',
+        hidden: true,
+        redirect: { path: '/YDManager/user'}
     },
 
 ];

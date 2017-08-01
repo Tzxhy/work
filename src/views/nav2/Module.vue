@@ -53,7 +53,7 @@ layout="prev, pager, next"
 <el-dialog title="新建模块" :visible.sync="newModule">
   <el-form :model="newData" label-position="left" label-width="80px">
     <el-form-item label="ID">
-      <el-input v-model="newData.id" type="number"></el-input>
+      <el-input v-model="newData.id"></el-input>
     </el-form-item>
     <el-form-item label="名称">
     	<el-input v-model="newData.name"></el-input>
@@ -101,7 +101,7 @@ layout="prev, pager, next"
       
     </el-form-item>
     <el-form-item label="父模块ID">
-      <el-input v-model="editData.fatherId"></el-input>
+      <el-input v-model="editData.fatherId" type="number"></el-input>
     </el-form-item>
     <el-form-item label="页面路径">
       <el-input v-model="editData.htmlPath"></el-input>
@@ -121,8 +121,8 @@ layout="prev, pager, next"
     </el-form-item>
     <el-form-item label="是否有子模块">
       <el-select v-model="editData.hasSub" placeholder="请选择">
-        <el-option label="有效" value="0"></el-option>
-        <el-option label="无效" value="1"></el-option>
+        <el-option label="有" value="0"></el-option>
+        <el-option label="无" value="1"></el-option>
       </el-select>
     </el-form-item>
   </el-form>
@@ -154,13 +154,13 @@ layout="prev, pager, next"
 
 <script>
   import { getModule,addModule, removeModule,editModule } from '../../api/api';
-  import util from '../../common/js/util';
 	export default {
 		data(){
 			return {
 				tableData: [
-				  {id: 'A123', name: 'A12221', fatherId: '12344321', htmlPath: 'www.baidu.com', iconPath: 'www.tupian.com', type: 0, priority: 8, hasSub: '0', }
+				  {id: '3234', name: 'A12221', fatherId: '12344321', htmlPath: 'www.baidu.com', iconPath: 'www.tupian.com', type: 0, priority: 8, hasSub: '0', }
 				],
+        sourceData: [],
         newData: {
           id:'', name: '', fatherId: '', htmlPath: '', iconPath: '', type: '', priority: '',hasSub: ''
         },
@@ -174,9 +174,16 @@ layout="prev, pager, next"
         isSaving: false, 
         isDeleting: false,
         deleteRow: 0,
+        totalPages: 1,
+        pageSize: 10,
+        nowPage: 1,
 			}
 		},
 		methods: {
+      handleCurrentChange(val){
+        this.tableData = this.sourceData.slice((val-1)*this.pageSize, val*this.pageSize);
+        console.log(this.tableData);
+      },
 			handleEdit( index, rowData) {
 				console.log(index, rowData);
 				this.editData = _.clone(rowData);
@@ -200,45 +207,102 @@ layout="prev, pager, next"
         let edate = new Date(data.endDate);
         let endDate = `${edate.getFullYear()}-${edate.getMonth()}-${edate.getDay()} ${edate.getHours()}:${edate.getMinutes()}:${edate.getSeconds()}`
         this.newData = {...data, startDate, endDate};
-        let Module = {Module: this.newData};
+        let Module = {module: this.newData};
         addModule(Module).then(data=>{
-          setTimeout(function(){self.isSaving = false}, 1000);
-          setTimeout(function(){self.newModule = false}, 2000);
+          if (data.data.result === 'success') {
+            self.$message({
+              type: 'success',
+              duration: 2000,
+              message: '成功添加一条记录!'
+            });
+            setTimeout(function(){
+              self.isSaving = false;
+              self.getModules();
+            }, 1000);
+            setTimeout(function(){self.newModule = false}, 2000);
+          } else {
+            self.$message({
+              type: 'error',
+              duration: 2000,
+              message: data.data.result
+            });
+            setTimeout(function(){
+              self.isSaving = false;
+            }, 1000);
+          }
         });
       },
       handleEditModule(){
         this.isSaving = true;
         let self = this; 
-        let Module = {Module: this.editData};
+        let Module = {module: this.editData};
         editModule(Module).then(data=>{
-          console.log('data')
-          setTimeout(function(){self.editModule = false}, 1000);
-          setTimeout(function(){self.isSaving = false}, 2000);
+          if (data.data.result === 'success') {
+            self.$message({
+              type: 'success',
+              duration: 2000,
+              message: '成功修改!'
+            });
+            setTimeout(function(){
+              self.editModule = false;
+              self.getModules();
+            }, 1000);
+            setTimeout(function(){self.isSaving = false}, 2000);
+          } else {
+            self.$message({
+              type: 'error',
+              duration: 2000,
+              message: data.data.result
+            });
+            setTimeout(function(){
+              self.editModule = false;
+            }, 1000);
+          }
         });
       },
       handleDeleteModule(){
         this.isDeleting = true;
         let self = this; 
-        let password = {Module: this.deleteData};
+        this.deleteData.moduleId = this.deleteData.id;
+        this.deleteData.deletepwd = this.deleteData.password;
+        let password = {module: this.deleteData};
         removeModule(password).then(data=>{
-          self.tableData.splice(self.deleteRow, 1);
-          setTimeout(function(){self.isDeleting = false}, 1000);
-          setTimeout(function(){self.deleteModule = false}, 2000);
+
+          if (data.data.result === 'success') {
+            self.$message({
+              type: 'success',
+              duration: 2000,
+              message: '成功修改!'
+            });
+            setTimeout(function(){
+              self.isDeleting = false;
+              self.getModules();
+            }, 1000);
+            setTimeout(function(){self.deleteModule = false}, 2000);
+          } else {
+            self.$message({
+              type: 'error',
+              duration: 2000,
+              message: data.data.result
+            });
+            setTimeout(function(){
+              self.isDeleting = false;
+            }, 1000);
+          }
         });
       },
       getModules(){
         let self = this;
         getModule().then(function (data) { 
           let receivedData = data.data;
-          _.forEach(receivedData, function (value, index) {
-            receivedData[index].account = receivedData[index].ModuleName;
-            receivedData[index].startDate = util.formatDate.format(new Date(receivedData[index].startTime),'y-M-d h:m:s');
-            receivedData[index].endDate = util.formatDate.format(new Date(receivedData[index].endTime),'y-M-d h:m:s');
-
-          })
-        self.tableData = receivedData;
-      });
-      }
+          self.sourceData = receivedData;
+          self.totalPages = receivedData.length; //页码
+          self.getFirstPage();
+        });
+      },
+      getFirstPage(){
+        this.tableData = this.sourceData.slice((this.nowPage-1)*this.pageSize, this.nowPage*this.pageSize);
+      },
 		},
     mounted(){
       this.getModules();

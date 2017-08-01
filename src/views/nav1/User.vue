@@ -54,8 +54,8 @@ layout="prev, pager, next"
 
 <el-dialog title="新建用户" :visible.sync="newUser">
   <el-form :model="newData" label-position="left" label-width="80px">
-    <el-form-item label="ID">
-      <el-input v-model="newData.id" type="number"></el-input>
+    <el-form-item label="用户ID">
+      <el-input v-model="newData.id"></el-input>
     </el-form-item>
     <el-form-item label="账号">
     	<el-input v-model="newData.name"></el-input>
@@ -95,7 +95,7 @@ layout="prev, pager, next"
     </el-form-item>
   </el-form>
   <div slot="footer" class="dialog-footer">
-    <el-button @click="newUser = false">取 消</el-button>
+    <el-button @click="handleCancelNewUser">取 消</el-button>
     <el-button type="primary" @click="handleNewUser"
     :loading="isSaving">确 定</el-button>
   </div>
@@ -153,6 +153,9 @@ layout="prev, pager, next"
 
 <el-dialog title="删除用户" :visible.sync="deleteUser">
   <el-form :model="deleteData" label-position="left" label-width="100px">
+    <el-form-item label="用户ID">
+      <el-input v-model="deleteData.id"></el-input>
+    </el-form-item>
     <el-form-item label="请输入密码">
       <el-input v-model="deleteData.password"></el-input>
     </el-form-item>
@@ -174,7 +177,7 @@ layout="prev, pager, next"
 		data(){
 			return {
 				tableData: [
-				  {id: 'A123', name: 'A12221', password: '12344321', userName: 'guohl', role: '3', startDate: '2017-7-31 14:23:11', endDate: '2017-7-31 14:23:22', status: '0'}
+				  {id: '1241', name: 'A12221', password: '12344321', userName: 'guohl', role: '3', startDate: '2017-7-31 14:23:11', endDate: '2017-7-31 14:23:22', status: '0'}
 				],
         sourceData: [],
         newData: {
@@ -212,6 +215,10 @@ layout="prev, pager, next"
         this.deleteRow = index;
         this.deleteUser = true; 
       },
+      handleCancelNewUser(){
+        this.newUser = false;
+        this.isSaving = false;
+      },
       handleNewUser(){
         
         this.isSaving = true;
@@ -233,7 +240,7 @@ layout="prev, pager, next"
             });
             setTimeout(function(){
               self.isSaving = false;
-              getUsers();
+              self.getUsers();
             }, 1000);
             setTimeout(function(){self.newUser = false}, 2000);
           } else {
@@ -242,6 +249,9 @@ layout="prev, pager, next"
               duration: 2000,
               message: data.data.result
             });
+            setTimeout(function(){
+              self.isSaving = false;
+            }, 1000);
           }
         });
       },
@@ -261,7 +271,7 @@ layout="prev, pager, next"
             });
             setTimeout(function(){
               self.editUser = false;
-              getUsers();
+              self.getUsers();
             }, 1000);
             setTimeout(function(){self.isSaving = false}, 2000);
           } else {
@@ -270,6 +280,9 @@ layout="prev, pager, next"
               duration: 2000,
               message: data.data.result
             });
+            setTimeout(function(){
+              self.isSaving = false
+            }, 1000);
           }
         });
       },
@@ -284,11 +297,11 @@ layout="prev, pager, next"
             self.$message({
               type: 'success',
               duration: 2000,
-              message: '成功修改!'
+              message: '成功删除!'
             });
             setTimeout(function(){
               self.isDeleting = false;
-              getUsers();
+              self.getUsers();
             }, 1000);
             setTimeout(function(){self.deleteUser = false}, 2000);
           } else {
@@ -297,6 +310,9 @@ layout="prev, pager, next"
               duration: 2000,
               message: data.data.result
             });
+            setTimeout(function(){
+              self.isDeleting = false;
+            }, 1000);
           }
         });
       },

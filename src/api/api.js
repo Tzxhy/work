@@ -20,3 +20,8 @@ export const addModule = params => { return axios.get(`${base}/addModule.do`, { 
 export const removeModule = params => { return axios.get(`${base}/deleteModule.do`, { params: params }); };
 export const editModule = params => { return axios.get(`${base}/updateModule.do`, { params: params }); };
 export const getModule = params => { return axios.get(`${base}/getModules.do`, { params: params }); };
+
+export const addUserModule = params => { return axios.get(`${base}/addUserModule.do`, { params: params }); };
+export const removeUserModule = params => { return axios.get(`${base}/deleteUserModule.do`, { params: params }); };
+export const editUserModule = params => { return axios.get(`${base}/updateUserModule.do`, { params: params }); };
+export const getUserModule = params => { return axios.get(`${base}/getUserModules.do`, { params: params }); };
