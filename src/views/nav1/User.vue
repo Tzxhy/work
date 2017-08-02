@@ -236,9 +236,9 @@ layout="prev, pager, next"
         let self = this; 
         let data = this.newData;
         let sdate = new Date(data.startDate);
-        let startTime = util.format(sdate, 'yyyy-MM-dd hh:mm:ss');
+        let startTime = util.formatData.format(sdate, 'yyyy-MM-dd hh:mm:ss');
         let edate = new Date(data.endDate);
-        let endTime = util.format(edate, 'yyyy-MM-dd hh:mm:ss');
+        let endTime = util.formatDate.format(edate, 'yyyy-MM-dd hh:mm:ss');
         if (this.newData.needEnc) {
           var password = strEnc(this.newData.password, key1, key2, key3);
         }
@@ -355,8 +355,8 @@ layout="prev, pager, next"
           let receivedData = data.data;
           _.forEach(receivedData, function (value, index) {
             receivedData[index].account = receivedData[index].userName;
-            receivedData[index].startDate = util.formatDate.format(new Date(receivedData[index].startTime),'y-M-d h:m:s');
-            receivedData[index].endDate = util.formatDate.format(new Date(receivedData[index].endTime),'y-M-d h:m:s');
+            receivedData[index].startDate = util.formatDate.format(new Date(receivedData[index].startTime),'yyyy-MM-dd hh:mm:ss');
+            receivedData[index].endDate = util.formatDate.format(new Date(receivedData[index].endTime),'yyyy-MM-dd hh:mm:ss');
 
           })
           self.sourceData = receivedData;
