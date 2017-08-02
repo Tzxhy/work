@@ -26,24 +26,24 @@ const router = new VueRouter({
   mode: 'history'
 })
 
-// router.beforeEach((to, from, next) => {
-//   //NProgress.start();
-//   if (to.path == '/login') {
-//     sessionStorage.removeItem('user');
-//   }
-//   let user = JSON.parse(sessionStorage.getItem('user'));
-//   if (!user && to.path != '/login') {
-//     next({ path: '/login' })
-//   } else {
-//     next()
-//   }
-// })
+router.beforeEach((to, from, next) => {
+  //NProgress.start();
+  if (to.path == '/YDManager/login') {
+    sessionStorage.removeItem('user');
+  }
+  let user = JSON.parse(sessionStorage.getItem('user'));
+  if (!user && to.path != '/YDManager/login') {
+    next({ path: '/YDManager/login' })
+  } else {
+    next()
+  }
+})
 
 //router.afterEach(transition => {
 //NProgress.done();
 //});
 
-new Vue({
+var app = new Vue({
   //el: '#app',
   //template: '<App/>',
   
@@ -52,4 +52,6 @@ new Vue({
   //components: { App }
   render: h => h(App)
 }).$mount('#app')
+window.app = app;
+export {app};
 

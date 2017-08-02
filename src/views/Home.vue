@@ -73,6 +73,7 @@
 </template>
 
 <script>
+import {requestLoginOut} from '../api/api'
 	export default {
 		data() {
 			return {
@@ -110,8 +111,9 @@
 				this.$confirm('确认退出吗?', '提示', {
 					//type: 'warning'
 				}).then(() => {
+					requestLoginOut();
 					sessionStorage.removeItem('user');
-					_this.$router.push('/login');
+					_this.$router.push('/YDManager/login');
 				}).catch(() => {
 
 				});

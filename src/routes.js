@@ -4,6 +4,10 @@ import Home from './views/Home.vue'
 import User from './views/nav1/User.vue'
 import Module from './views/nav2/Module.vue'
 import UserModule from './views/nav3/UserModule.vue'
+import RelationAreaTeam from './views/nav3/RelationAreaTeam.vue'
+import UserAreaTeam from './views/nav3/UserAreaTeam.vue'
+import AreaTeam from './views/nav4/AreaTeam.vue'
+import Area from './views/nav4/Area.vue'
 
 
 
@@ -13,12 +17,12 @@ import Page6 from './views/nav3/Page6.vue'
 import echarts from './views/charts/echarts.vue'
 
 let routes = [
-    // {
-    //     path: '/login',
-    //     component: Login,
-    //     name: '',
-    //     hidden: true
-    // },
+    {
+        path: '/YDManager/login',
+        component: Login,
+        name: '',
+        hidden: true
+    },
     {
         path: '/YDManager/404',
         component: NotFound,
@@ -29,11 +33,11 @@ let routes = [
     {
         path: '/YDManager',
         component: Home,
-        name: '用户',
+        name: '',
         leaf: true,
         iconCls: 'el-icon-message',//图标样式class
         children: [
-            { path: 'user', component: User, name: '用户' },
+            { path: '/YDManager/user', component: User, name: '用户' },
             // { path: '/table', component: Table, name: 'Table' },
             // { path: '/form', component: Form, name: 'Form' },
             // { path: '/user', component: user, name: '列表' },
@@ -42,50 +46,47 @@ let routes = [
     {
         path: '/YDManager',
         component: Home,
-        name: '模块',
+        name: '',
         leaf: true,
         iconCls: 'fa fa-id-card-o',
         children: [
-            { path: 'module', component: Module, name: '模块' },
+            { path: '/YDManager/module', component: Module, name: '模块' },
             // { path: '/YDManager/page5', component: Page5, name: '页面5' }
         ]
     },
     {
         path: '/YDManager',
         component: Home,
-        name: '用户模块',
+        name: '关系',
         iconCls: 'fa fa-address-card',
         // leaf: true,//只有一个节点
         children: [
-            { path: 'user-module', component: UserModule, name: '关系' },
-            { path: 'user-module', component: UserModule, name: '用户-模块' },
+            { path: '/YDManager/user-module', component: UserModule, name: '用户-模块' },
+            { path: '/YDManager/relation-areateam', component: RelationAreaTeam, name: '区域组-区域' },
+            { path: '/YDManager/user-areateam', component: UserAreaTeam, name: '用户-区域组' },
         ]
     },
     {
         path: '/YDManager',
         component: Home,
-        name: 'Charts',
+        name: '区域',
         iconCls: 'fa fa-bar-chart',
         children: [
-            { path: '/YDManager/echarts', component: echarts, name: 'echarts' }
+            { path: '/YDManager/area-team', component: AreaTeam, name: '区域组' },
+            { path: '/YDManager/area', component: Area, name: '区域1' },
         ]
-    },
-    {
-        path: '*',
-        hidden: true,
-        redirect: { path: '/YDManager/404' }
-    },
-    {
-        path: '/YDManager/index.html',
-        hidden: true,
-        redirect: { path: '/YDManager/user' }
     },
     {
         path: '/YDManager',
         hidden: true,
         redirect: { path: '/YDManager/user'}
     },
-
+    {
+        path: '*',
+        hidden: true,
+        redirect: { path: '/YDManager/404' }
+    }
+    
 ];
 
 export default routes;

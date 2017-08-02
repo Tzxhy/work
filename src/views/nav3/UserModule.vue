@@ -3,7 +3,7 @@
 		<div style="text-align:right;margin-bottom: 20px; margin-top: 20px; ">
 			<el-button
 			type="primary"
-			@click="newModule = true">新增模块</el-button>
+			@click="newUserModule = true">新增用户关系</el-button>
 		</div>
 		<el-table
 		:data="tableData">
@@ -24,161 +24,100 @@
 	label="ID"
 	prop="id"></el-table-column>
 	<el-table-column
-	label="名称"
-	prop="name"></el-table-column>
+	label="用户ID"
+	prop="foreignOne"></el-table-column>
 	<el-table-column
-	label="父模块ID"
-	prop="fatherId"></el-table-column>
-	<el-table-column
-	label="页面路径"
-	prop="htmlPath"></el-table-column>
-	<el-table-column
-	label="图标路径"
-	prop="iconPath"></el-table-column>
-	<el-table-column
-	label="类型"
-	prop="type"></el-table-column>
-	<el-table-column
-	label="优先级"
-	prop="priority"></el-table-column>
-	<el-table-column
-	label="是否有子模块"
-	prop="hasSub"></el-table-column>
-
+	label="模块ID"
+	prop="foreignTwo"></el-table-column>
 </el-table>
 <el-pagination
 layout="prev, pager, next"
-:total="30"></el-pagination>
+:page-size="pageSize"
+@current-change="handleCurrentChange"
+:total="totalPages"></el-pagination>
 
-<el-dialog title="新建模块" :visible.sync="newModule">
+<el-dialog title="新建用户-模块" :visible.sync="newUserModule">
   <el-form :model="newData" label-position="left" label-width="80px">
-    <el-form-item label="ID">
-      <el-input v-model="newData.id"></el-input>
+    <el-form-item label="用户ID">
+    	<el-input v-model="newData.foreignOne"></el-input>
     </el-form-item>
-    <el-form-item label="名称">
-    	<el-input v-model="newData.name"></el-input>
-    </el-form-item>
-    <el-form-item label="父模块ID">
-      <el-input v-model="newData.fatherId"></el-input>
-    </el-form-item>
-    <el-form-item label="页面路径">
-      <el-input v-model="newData.htmlPath"></el-input>
-    </el-form-item>
-    <el-form-item label="图标路径">
-    	<el-input v-model="newData.iconPath"></el-input>
-    </el-form-item>
-    <el-form-item label="类型">
-    	<el-select v-model="newData.type" placeholder="请选择">
-        <el-option label="有效" value="0"></el-option>
-        <el-option label="无效" value="1"></el-option>
-      </el-select>
-    </el-form-item>
-    </el-form-item>
-		<el-form-item label="优先级">
-			<el-input v-model="newData.priority" type="number"></el-input>
-    </el-form-item>
-    <el-form-item label="是否有子模块">
-      <el-select v-model="newData.hasSub" placeholder="请选择">
-        <el-option label="有效" value="0"></el-option>
-        <el-option label="无效" value="1"></el-option>
-      </el-select>
+    <el-form-item label="模块ID">
+      <el-input v-model="newData.foreignTwo"></el-input>
     </el-form-item>
   </el-form>
   <div slot="footer" class="dialog-footer">
-    <el-button @click="newModule = false">取 消</el-button>
-    <el-button type="primary" @click="handleNewModule"
+    <el-button @click="newUserModule = false">取 消</el-button>
+    <el-button type="primary" @click="handleNewUserModule"
     :loading="isSaving">确 定</el-button>
   </div>
 </el-dialog>
 <!-- 编辑 -->
-<el-dialog title="编辑模块" :visible.sync="editModule">
+<el-dialog title="编辑用户-模块" :visible.sync="editUserModule">
   <el-form :model="editData" label-position="left" label-width="80px">
     <el-form-item label="ID">
-      <el-input v-model="editData.id" readonly="true" ></el-input>
+      <el-input v-model="editData.id" readonly="true"></el-input>
     </el-form-item>
-    <el-form-item label="名称">
-    	<el-input v-model="editData.name"></el-input>
+    <el-form-item label="用户ID">
+    	<el-input v-model="editData.foreignOne"></el-input>
       
     </el-form-item>
-    <el-form-item label="父模块ID">
-      <el-input v-model="editData.fatherId" type="number"></el-input>
-    </el-form-item>
-    <el-form-item label="页面路径">
-      <el-input v-model="editData.htmlPath"></el-input>
-    </el-form-item>
-    <el-form-item label="图标路径">
-    	<el-input v-model="editData.iconPath"></el-input>
-      
-    </el-form-item>
-    <el-form-item label="类型">
-      <el-select v-model="editData.type" placeholder="请选择">
-        <el-option label="有效" value="0"></el-option>
-        <el-option label="无效" value="1"></el-option>
-      </el-select>
-    </el-form-item>
-		<el-form-item label="优先级">
-      <el-input v-model="editData.priority" type="number"></el-input>
-    </el-form-item>
-    <el-form-item label="是否有子模块">
-      <el-select v-model="editData.hasSub" placeholder="请选择">
-        <el-option label="有" value="0"></el-option>
-        <el-option label="无" value="1"></el-option>
-      </el-select>
+    <el-form-item label="模块ID">
+      <el-input v-model="editData.foreignTwo"></el-input>
     </el-form-item>
   </el-form>
   <div slot="footer" class="dialog-footer">
-    <el-button @click="editModule = false">取 消</el-button>
-    <el-button type="primary" @click="handleEditModule"
+    <el-button @click="editUserModule = false">取 消</el-button>
+    <el-button type="primary" @click="handleEditUserModule"
     :loading="isSaving">确 定</el-button>
   </div>
 </el-dialog>
 
-<el-dialog title="删除模块" :visible.sync="deleteModule">
+<el-dialog title="删除用户-模块" :visible.sync="deleteUserModule">
   <el-form :model="deleteData" label-position="left" label-width="100px">
-    <el-form-item label="ID">
+  	<el-form-item label="ID">
       <el-input v-model="deleteData.id" readonly="true"></el-input>
     </el-form-item>
     <el-form-item label="请输入密码">
-      <el-input v-model="deleteData.fatherId"></el-input>
+      <el-input v-model="deleteData.password"></el-input>
     </el-form-item>
   </el-form>
   <div slot="footer" class="dialog-footer">
-    <el-button @click="deleteModule = false">取 消</el-button>
-    <el-button type="primary" @click="handleDeleteModule"
+    <el-button @click="deleteUserModule = false">取 消</el-button>
+    <el-button type="primary" @click="handleDeleteUserModule"
     :loading="isDeleting">确 定</el-button>
   </div>
 </el-dialog>
 
 </div>
-</template> 
+</template>
 
 <script>
-  import { getModule,addModule, removeModule,editModule } from '../../api/api';
+  import { getUserModule,addUserModule, removeUserModule,editUserModule } from '../../api/api';
   import {validateLogin} from '../../common/js/validateStatus'
 	export default {
 		data(){
 			return {
 				tableData: [
-				  {id: '', name: '', fatherId: '', htmlPath: '', iconPath: '', type: '', priority: '', hasSub: '', }
+				  {id: '', foreignOne: '', foreignTwo: ''}
 				],
         sourceData: [],
         newData: {
-          id:'', name: '', fatherId: '', htmlPath: '', iconPath: '', type: '', priority: '',hasSub: ''
+          id:'', foreignOne: '', foreignTwo: ''
         },
         editData: {
         },
         deleteData: {
         },
-				newModule: false,
-				editModule: false,
-        deleteModule:false,
+				newUserModule: false,
+				editUserModule: false,
+        deleteUserModule:false,
         isSaving: false, 
         isDeleting: false,
         deleteRow: 0,
         totalPages: 1,
         pageSize: 10,
         nowPage: 1,
-			}
+      }
 		},
 		methods: {
       handleCurrentChange(val){
@@ -188,28 +127,21 @@ layout="prev, pager, next"
 			handleEdit( index, rowData) {
 				console.log(index, rowData);
 				this.editData = _.clone(rowData);
-				this.editModule = true;	
+				this.editUserModule = true;	
 			},
       handleDelete( index, rowData) {
         console.log(index, rowData);
         this.deleteData = _.clone(rowData);
         this.deleteData.password = '';
         this.deleteRow = index;
-        this.deleteModule = true; 
+        this.deleteUserModule = true; 
       },
-      handleNewModule(){
+      handleNewUserModule(){
         
         this.isSaving = true;
         let self = this; 
-        let data = this.newData;
-        let sdate = new Date(data.startDate);
-        console.log(sdate);
-        let startDate = `${sdate.getFullYear()}-${sdate.getMonth()}-${sdate.getDay()} ${sdate.getHours()}:${sdate.getMinutes()}:${sdate.getSeconds()}`;
-        let edate = new Date(data.endDate);
-        let endDate = `${edate.getFullYear()}-${edate.getMonth()}-${edate.getDay()} ${edate.getHours()}:${edate.getMinutes()}:${edate.getSeconds()}`
-        this.newData = {...data, startDate, endDate};
-        let Module = {module: this.newData};
-        addModule(Module).then(data=>{
+        let UserModule = {userModule: this.newData};
+        addUserModule(UserModule).then(data=>{
           if(!validateLogin(data.data.result)){
             self.$router.push({ path: '/YDManager/login' });
             return;
@@ -222,9 +154,9 @@ layout="prev, pager, next"
             });
             setTimeout(function(){
               self.isSaving = false;
-              self.getModules();
+              self.getUserModules();
             }, 1000);
-            setTimeout(function(){self.newModule = false}, 2000);
+            setTimeout(function(){self.newUserModule = false}, 2000);
           } else {
             self.$message({
               type: 'error',
@@ -237,11 +169,11 @@ layout="prev, pager, next"
           }
         });
       },
-      handleEditModule(){
+      handleEditUserModule(){
         this.isSaving = true;
-        let self = this; 
-        let Module = {module: this.editData};
-        editModule(Module).then(data=>{
+        let self = this;
+        let UserModule = {userModule: this.editData };
+        editUserModule(UserModule).then(data=>{
           if(!validateLogin(data.data.result)){
             self.$router.push({ path: '/YDManager/login' });
             return;
@@ -253,8 +185,8 @@ layout="prev, pager, next"
               message: '成功修改!'
             });
             setTimeout(function(){
-              self.editModule = false;
-              self.getModules();
+              self.editUserModule = false;
+              self.getUserModules();
             }, 1000);
             setTimeout(function(){self.isSaving = false}, 2000);
           } else {
@@ -264,18 +196,17 @@ layout="prev, pager, next"
               message: data.data.result
             });
             setTimeout(function(){
-              self.editModule = false;
+              self.editUserModule = false;
             }, 1000);
           }
         });
       },
-      handleDeleteModule(){
+      handleDeleteUserModule(){
         this.isDeleting = true;
-        let self = this; 
-        this.deleteData.moduleId = this.deleteData.id;
+        let self = this;
+        this.deleteData.userModuleId = this.deleteData.id;
         this.deleteData.deletepwd = this.deleteData.password;
-        let password = {module: this.deleteData};
-        removeModule(password).then(data=>{
+        removeUserModule(this.deleteData).then(data=>{
           if(!validateLogin(data.data.result)){
             self.$router.push({ path: '/YDManager/login' });
             return;
@@ -288,9 +219,9 @@ layout="prev, pager, next"
             });
             setTimeout(function(){
               self.isDeleting = false;
-              self.getModules();
+              self.getUserModules();
             }, 1000);
-            setTimeout(function(){self.deleteModule = false}, 2000);
+            setTimeout(function(){self.deleteUserModule = false}, 2000);
           } else {
             self.$message({
               type: 'error',
@@ -303,13 +234,14 @@ layout="prev, pager, next"
           }
         });
       },
-      getModules(){
+      getUserModules(){
         let self = this;
-        getModule().then(function (data) { 
+        getUserModule().then(function (data) {
           if(!validateLogin(data.data.result)){
             self.$router.push({ path: '/YDManager/login' });
             return;
           }
+          console.log('getUserModule ',data);
           let receivedData = data.data;
           self.sourceData = receivedData;
           self.totalPages = receivedData.length; //页码
@@ -319,9 +251,15 @@ layout="prev, pager, next"
       getFirstPage(){
         this.tableData = this.sourceData.slice((this.nowPage-1)*this.pageSize, this.nowPage*this.pageSize);
       },
+
 		},
+
+
+
+
+
     mounted(){
-      this.getModules();
+      this.getUserModules();
     }
 	}
 

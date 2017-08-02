@@ -3,11 +3,13 @@
 		<div style="text-align:right;margin-bottom: 20px; margin-top: 20px; ">
 			<el-button
 			type="primary"
-			@click="newModule = true">新增模块</el-button>
+			@click="newArea = true">新增区域</el-button>
 		</div>
 		<el-table
+    style="width: 100%"
 		:data="tableData">
 		<el-table-column
+    fixed="left"
 		label="操作">
 		<template scope="scope">
 			<el-button
@@ -22,163 +24,168 @@
 	</el-table-column>
 	<el-table-column
 	label="ID"
+  fixed="left"
 	prop="id"></el-table-column>
-	<el-table-column
-	label="名称"
-	prop="name"></el-table-column>
-	<el-table-column
-	label="父模块ID"
-	prop="fatherId"></el-table-column>
-	<el-table-column
-	label="页面路径"
-	prop="htmlPath"></el-table-column>
-	<el-table-column
-	label="图标路径"
-	prop="iconPath"></el-table-column>
-	<el-table-column
-	label="类型"
-	prop="type"></el-table-column>
-	<el-table-column
-	label="优先级"
-	prop="priority"></el-table-column>
-	<el-table-column
-	label="是否有子模块"
-	prop="hasSub"></el-table-column>
-
+  <el-table-column
+  label="父区域名称"
+  fixed="left"
+  width="120"
+  prop="fatherId"></el-table-column>
+  <el-table-column
+  label="区域名称"
+  width="120"
+  prop="name"></el-table-column>
+  <el-table-column
+  label="中心点维度"
+  width="120"
+  prop="centerPointLat"></el-table-column>
+  <el-table-column
+  label="中心点经度"
+  width="120"
+  prop="centerPointLng"></el-table-column>
+  <el-table-column
+  label="区域路径"
+  width="120"
+  prop="areaPath"></el-table-column>
+  <el-table-column
+  label="地区级别"
+  width="100"
+  prop="mapLevel"></el-table-column>
+  <el-table-column
+  label="站点最大人数"
+  width="120"
+  prop="maxStationPeople"></el-table-column>
+  <el-table-column
+  label="当日累计最大人数"
+  width="180"
+  prop="maxDayNum"></el-table-column>
 </el-table>
 <el-pagination
 layout="prev, pager, next"
-:total="30"></el-pagination>
+:page-size="pageSize"
+@current-change="handleCurrentChange"
+:total="totalPages"></el-pagination>
 
-<el-dialog title="新建模块" :visible.sync="newModule">
-  <el-form :model="newData" label-position="left" label-width="80px">
+<el-dialog title="新建区域" :visible.sync="newArea">
+  <el-form :model="newData" label-position="left" label-width="120px">
     <el-form-item label="ID">
-      <el-input v-model="newData.id"></el-input>
+      <el-input v-model="newData.id" type="number"></el-input>
     </el-form-item>
-    <el-form-item label="名称">
-    	<el-input v-model="newData.name"></el-input>
+    <el-form-item label="父区域名称">
+    	<el-input v-model="newData.fatherId" type="number"></el-input>
     </el-form-item>
-    <el-form-item label="父模块ID">
-      <el-input v-model="newData.fatherId"></el-input>
+    <el-form-item label="区域名称">
+      <el-input v-model="newData.name"></el-input>
     </el-form-item>
-    <el-form-item label="页面路径">
-      <el-input v-model="newData.htmlPath"></el-input>
+    <el-form-item label="中心点维度">
+      <el-input v-model="newData.centerPointLat"></el-input>
     </el-form-item>
-    <el-form-item label="图标路径">
-    	<el-input v-model="newData.iconPath"></el-input>
+    <el-form-item label="中心点经度">
+      <el-input v-model="newData.centerPointLng"></el-input>
     </el-form-item>
-    <el-form-item label="类型">
-    	<el-select v-model="newData.type" placeholder="请选择">
-        <el-option label="有效" value="0"></el-option>
-        <el-option label="无效" value="1"></el-option>
-      </el-select>
+    <el-form-item label="区域路径">
+      <el-input v-model="newData.areaPath"></el-input>
     </el-form-item>
+    <el-form-item label="地区级别">
+      <el-input v-model="newData.mapLevel" type="number"></el-input>
     </el-form-item>
-		<el-form-item label="优先级">
-			<el-input v-model="newData.priority" type="number"></el-input>
-    </el-form-item>
-    <el-form-item label="是否有子模块">
-      <el-select v-model="newData.hasSub" placeholder="请选择">
-        <el-option label="有效" value="0"></el-option>
-        <el-option label="无效" value="1"></el-option>
-      </el-select>
+    <el-form-item label="站点最大人数">
+      <el-input v-model="newData.maxStationPeople" type="number"></el-input>
+    </el-form-item> 
+    <el-form-item label="当日累计最大人数">
+      <el-input v-model="newData.maxDayNum" type="number"></el-input>
     </el-form-item>
   </el-form>
   <div slot="footer" class="dialog-footer">
-    <el-button @click="newModule = false">取 消</el-button>
-    <el-button type="primary" @click="handleNewModule"
+    <el-button @click="handleCancelnewArea">取 消</el-button>
+    <el-button type="primary" @click="handleNewArea"
     :loading="isSaving">确 定</el-button>
   </div>
 </el-dialog>
 <!-- 编辑 -->
-<el-dialog title="编辑模块" :visible.sync="editModule">
-  <el-form :model="editData" label-position="left" label-width="80px">
+<el-dialog title="编辑区域" :visible.sync="editArea">
+  <el-form :model="editData" label-position="left" label-width="120px">
     <el-form-item label="ID">
-      <el-input v-model="editData.id" readonly="true" ></el-input>
+      <el-input v-model="editData.id" readonly="true"></el-input>
     </el-form-item>
-    <el-form-item label="名称">
-    	<el-input v-model="editData.name"></el-input>
-      
-    </el-form-item>
-    <el-form-item label="父模块ID">
+    <el-form-item label="父区域名称">
       <el-input v-model="editData.fatherId" type="number"></el-input>
     </el-form-item>
-    <el-form-item label="页面路径">
-      <el-input v-model="editData.htmlPath"></el-input>
+    <el-form-item label="区域名称">
+      <el-input v-model="editData.name"></el-input>
     </el-form-item>
-    <el-form-item label="图标路径">
-    	<el-input v-model="editData.iconPath"></el-input>
-      
+    <el-form-item label="中心点维度">
+      <el-input v-model="editData.centerPointLat"></el-input>
     </el-form-item>
-    <el-form-item label="类型">
-      <el-select v-model="editData.type" placeholder="请选择">
-        <el-option label="有效" value="0"></el-option>
-        <el-option label="无效" value="1"></el-option>
-      </el-select>
+    <el-form-item label="中心点经度">
+      <el-input v-model="editData.centerPointLng"></el-input>
     </el-form-item>
-		<el-form-item label="优先级">
-      <el-input v-model="editData.priority" type="number"></el-input>
+    <el-form-item label="区域路径">
+      <el-input v-model="editData.areaPath"></el-input>
     </el-form-item>
-    <el-form-item label="是否有子模块">
-      <el-select v-model="editData.hasSub" placeholder="请选择">
-        <el-option label="有" value="0"></el-option>
-        <el-option label="无" value="1"></el-option>
-      </el-select>
+    <el-form-item label="地区级别">
+      <el-input v-model="editData.mapLevel" type="number"></el-input>
+    </el-form-item>
+    <el-form-item label="站点最大人数">
+      <el-input v-model="editData.maxStationPeople" type="number"></el-input>
+    </el-form-item> 
+    <el-form-item label="当日累计最大人数">
+      <el-input v-model="editData.maxDayNum" type="number"></el-input>
     </el-form-item>
   </el-form>
   <div slot="footer" class="dialog-footer">
-    <el-button @click="editModule = false">取 消</el-button>
-    <el-button type="primary" @click="handleEditModule"
+    <el-button @click="editArea = false">取 消</el-button>
+    <el-button type="primary" @click="handleEditArea"
     :loading="isSaving">确 定</el-button>
   </div>
 </el-dialog>
 
-<el-dialog title="删除模块" :visible.sync="deleteModule">
+<el-dialog title="删除区域" :visible.sync="deleteArea">
   <el-form :model="deleteData" label-position="left" label-width="100px">
     <el-form-item label="ID">
       <el-input v-model="deleteData.id" readonly="true"></el-input>
     </el-form-item>
     <el-form-item label="请输入密码">
-      <el-input v-model="deleteData.fatherId"></el-input>
+      <el-input v-model="deleteData.password"></el-input>
     </el-form-item>
   </el-form>
   <div slot="footer" class="dialog-footer">
-    <el-button @click="deleteModule = false">取 消</el-button>
-    <el-button type="primary" @click="handleDeleteModule"
+    <el-button @click="deleteArea = false">取 消</el-button>
+    <el-button type="primary" @click="handleDeleteArea"
     :loading="isDeleting">确 定</el-button>
   </div>
 </el-dialog>
 
 </div>
-</template> 
+</template>
 
 <script>
-  import { getModule,addModule, removeModule,editModule } from '../../api/api';
+  import { getArea,addArea, removeArea,editArea } from '../../api/api';
   import {validateLogin} from '../../common/js/validateStatus'
 	export default {
 		data(){
 			return {
 				tableData: [
-				  {id: '', name: '', fatherId: '', htmlPath: '', iconPath: '', type: '', priority: '', hasSub: '', }
+				  // {id: '10086', fatherId: '1121', name: '10086基地',centerPointLat:'121.2131',centerPointLng: '24.21',areaPath: '北大街',mapLevel: 13,maxStationPeople:21321312,maxDayNum:234223423422  }
 				],
         sourceData: [],
         newData: {
-          id:'', name: '', fatherId: '', htmlPath: '', iconPath: '', type: '', priority: '',hasSub: ''
+          id: '', fatherId: '', name: '',centerPointLat:'',centerPointLng: '',areaPath: '',mapLevel: '',maxStationPeople:'',maxDayNum:''
         },
         editData: {
         },
         deleteData: {
         },
-				newModule: false,
-				editModule: false,
-        deleteModule:false,
+				newArea: false,
+				editArea: false,
+        deleteArea:false,
         isSaving: false, 
         isDeleting: false,
         deleteRow: 0,
         totalPages: 1,
         pageSize: 10,
         nowPage: 1,
-			}
+      }
 		},
 		methods: {
       handleCurrentChange(val){
@@ -188,28 +195,25 @@ layout="prev, pager, next"
 			handleEdit( index, rowData) {
 				console.log(index, rowData);
 				this.editData = _.clone(rowData);
-				this.editModule = true;	
+				this.editArea = true;	
 			},
       handleDelete( index, rowData) {
         console.log(index, rowData);
         this.deleteData = _.clone(rowData);
         this.deleteData.password = '';
         this.deleteRow = index;
-        this.deleteModule = true; 
+        this.deleteArea = true; 
       },
-      handleNewModule(){
+      handleCancelnewArea(){
+        this.newArea = false;
+        this.isSaving = false;
+      },
+      handleNewArea(){
         
         this.isSaving = true;
         let self = this; 
-        let data = this.newData;
-        let sdate = new Date(data.startDate);
-        console.log(sdate);
-        let startDate = `${sdate.getFullYear()}-${sdate.getMonth()}-${sdate.getDay()} ${sdate.getHours()}:${sdate.getMinutes()}:${sdate.getSeconds()}`;
-        let edate = new Date(data.endDate);
-        let endDate = `${edate.getFullYear()}-${edate.getMonth()}-${edate.getDay()} ${edate.getHours()}:${edate.getMinutes()}:${edate.getSeconds()}`
-        this.newData = {...data, startDate, endDate};
-        let Module = {module: this.newData};
-        addModule(Module).then(data=>{
+        let Area = {area: this.newData};
+        addArea(Area).then(data=>{
           if(!validateLogin(data.data.result)){
             self.$router.push({ path: '/YDManager/login' });
             return;
@@ -222,9 +226,9 @@ layout="prev, pager, next"
             });
             setTimeout(function(){
               self.isSaving = false;
-              self.getModules();
+              self.getAreas();
             }, 1000);
-            setTimeout(function(){self.newModule = false}, 2000);
+            setTimeout(function(){self.newArea = false}, 2000);
           } else {
             self.$message({
               type: 'error',
@@ -237,11 +241,12 @@ layout="prev, pager, next"
           }
         });
       },
-      handleEditModule(){
+      handleEditArea(){
         this.isSaving = true;
-        let self = this; 
-        let Module = {module: this.editData};
-        editModule(Module).then(data=>{
+        let self = this;
+        
+        let Area = {area: this.editData };
+        editArea(Area).then(data=>{
           if(!validateLogin(data.data.result)){
             self.$router.push({ path: '/YDManager/login' });
             return;
@@ -253,8 +258,8 @@ layout="prev, pager, next"
               message: '成功修改!'
             });
             setTimeout(function(){
-              self.editModule = false;
-              self.getModules();
+              self.editArea = false;
+              self.getAreas();
             }, 1000);
             setTimeout(function(){self.isSaving = false}, 2000);
           } else {
@@ -264,18 +269,18 @@ layout="prev, pager, next"
               message: data.data.result
             });
             setTimeout(function(){
-              self.editModule = false;
+              self.isSaving = false
             }, 1000);
           }
         });
       },
-      handleDeleteModule(){
+      handleDeleteArea(){
         this.isDeleting = true;
-        let self = this; 
-        this.deleteData.moduleId = this.deleteData.id;
+        let self = this;
+        this.deleteData.areaId = this.deleteData.id;
         this.deleteData.deletepwd = this.deleteData.password;
-        let password = {module: this.deleteData};
-        removeModule(password).then(data=>{
+        // let password = {Area: this.deleteData};
+        removeArea(this.deleteData).then(data=>{
           if(!validateLogin(data.data.result)){
             self.$router.push({ path: '/YDManager/login' });
             return;
@@ -284,13 +289,13 @@ layout="prev, pager, next"
             self.$message({
               type: 'success',
               duration: 2000,
-              message: '成功修改!'
+              message: '成功删除!'
             });
             setTimeout(function(){
               self.isDeleting = false;
-              self.getModules();
+              self.getAreas();
             }, 1000);
-            setTimeout(function(){self.deleteModule = false}, 2000);
+            setTimeout(function(){self.deleteArea = false}, 2000);
           } else {
             self.$message({
               type: 'error',
@@ -303,13 +308,14 @@ layout="prev, pager, next"
           }
         });
       },
-      getModules(){
+      getAreas(){
         let self = this;
-        getModule().then(function (data) { 
+        getArea().then(function (data) {
           if(!validateLogin(data.data.result)){
             self.$router.push({ path: '/YDManager/login' });
             return;
           }
+          console.log('getArea ',data);
           let receivedData = data.data;
           self.sourceData = receivedData;
           self.totalPages = receivedData.length; //页码
@@ -319,9 +325,15 @@ layout="prev, pager, next"
       getFirstPage(){
         this.tableData = this.sourceData.slice((this.nowPage-1)*this.pageSize, this.nowPage*this.pageSize);
       },
+
 		},
+
+
+
+
+
     mounted(){
-      this.getModules();
+      this.getAreas();
     }
 	}
 

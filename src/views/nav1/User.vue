@@ -61,7 +61,17 @@ layout="prev, pager, next"
     	<el-input v-model="newData.name"></el-input>
     </el-form-item>
     <el-form-item label="密码">
-      <el-input v-model="newData.password"></el-input>
+      <el-col :span="10">
+        <el-input v-model="newData.password"></el-input>
+      </el-col>
+      <el-col :span="4" :offset="3"> 是否加密</el-col>
+      <el-col :span="5" :offset="1">
+        <el-switch
+          v-model="newData.needEnc"
+          on-text=""
+          off-text="">
+        </el-switch>
+      </el-col>
     </el-form-item>
     <el-form-item label="名字">
       <el-input v-model="newData.userName"></el-input>
@@ -104,11 +114,10 @@ layout="prev, pager, next"
 <el-dialog title="编辑" :visible.sync="editUser">
   <el-form :model="editData" label-position="left" label-width="80px">
     <el-form-item label="ID">
-      <el-input v-model="editData.id"></el-input>
+      <el-input v-model="editData.id" readonly="true"></el-input>
     </el-form-item>
     <el-form-item label="账号">
     	<el-input v-model="editData.name"></el-input>
-      
     </el-form-item>
     <el-form-item label="密码">
       <el-input v-model="editData.password"></el-input>
@@ -154,7 +163,7 @@ layout="prev, pager, next"
 <el-dialog title="删除用户" :visible.sync="deleteUser">
   <el-form :model="deleteData" label-position="left" label-width="100px">
     <el-form-item label="用户ID">
-      <el-input v-model="deleteData.id"></el-input>
+      <el-input v-model="deleteData.id" readonly="true"></el-input>
     </el-form-item>
     <el-form-item label="请输入密码">
       <el-input v-model="deleteData.password"></el-input>
@@ -173,15 +182,17 @@ layout="prev, pager, next"
 <script>
   import { getUser,addUser, removeUser,editUser } from '../../api/api';
   import util from '../../common/js/util';
+  import {validateLogin} from '../../common/js/validateStatus'
+  import {strEnc,key1, key2, key3} from '../../common/js/des'
 	export default {
 		data(){
 			return {
 				tableData: [
-				  {id: '1241', name: 'A12221', password: '12344321', userName: 'guohl', role: '3', startDate: '2017-7-31 14:23:11', endDate: '2017-7-31 14:23:22', status: '0'}
+				  {id: '', name: '', password: '', userName: '', role: '', startDate: '', endDate: '', status: ''}
 				],
         sourceData: [],
         newData: {
-          id:'', name: '', password: '', userName: '', role: '', startDate: '', endDate: '',status: ''
+          id:'', name: '', password: '', userName: '', role: '', startDate: '', endDate: '',status: '',needEnc:''
         },
         editData: {
         },
@@ -225,13 +236,22 @@ layout="prev, pager, next"
         let self = this; 
         let data = this.newData;
         let sdate = new Date(data.startDate);
-        console.log(sdate);
-        let startTime = `${sdate.getFullYear()}-${sdate.getMonth()}-${sdate.getDay()} ${sdate.getHours()}:${sdate.getMinutes()}:${sdate.getSeconds()}`;
+        let startTime = util.format(sdate, 'yyyy-MM-dd hh:mm:ss');
         let edate = new Date(data.endDate);
-        let endTime = `${edate.getFullYear()}-${edate.getMonth()}-${edate.getDay()} ${edate.getHours()}:${edate.getMinutes()}:${edate.getSeconds()}`
-        this.newData = {...data, startTime, endTime};
+        let endTime = util.format(edate, 'yyyy-MM-dd hh:mm:ss');
+        if (this.newData.needEnc) {
+          var password = strEnc(this.newData.password, key1, key2, key3);
+        }
+        this.newData = {...data, startTime, endTime,password};
         let user = {user: this.newData};
         addUser(user).then(data=>{
+          console.log('data',data);
+              console.log('typeof data',typeof data.data);
+              console.log('data.data', data.data);
+          if(!validateLogin(data.data.result)){
+            self.$router.push({ path: '/YDManager/login' });
+            return;
+          }
           if (data.data.result === 'success') {
             self.$message({
               type: 'success',
@@ -263,6 +283,10 @@ layout="prev, pager, next"
         let data = {...this.editData, startTime, endTime}
         let user = {user: data };
         editUser(user).then(data=>{
+          if(!validateLogin(data.data.result)){
+            self.$router.push({ path: '/YDManager/login' });
+            return;
+          }
           if (data.data.result === 'success') {
             self.$message({
               type: 'success',
@@ -293,6 +317,10 @@ layout="prev, pager, next"
         this.deleteData.deletepwd = this.deleteData.password;
         // let password = {user: this.deleteData};
         removeUser(this.deleteData).then(data=>{
+          if(!validateLogin(data.data.result)){
+            self.$router.push({ path: '/YDManager/login' });
+            return;
+          }
           if (data.data.result === 'success') {
             self.$message({
               type: 'success',
@@ -319,6 +347,10 @@ layout="prev, pager, next"
       getUsers(){
         let self = this;
         getUser().then(function (data) {
+          if(!validateLogin(data.data.result)){
+            self.$router.push({ path: '/YDManager/login' });
+            return;
+          }
           console.log('getUser ',data);
           let receivedData = data.data;
           _.forEach(receivedData, function (value, index) {

@@ -17,14 +17,17 @@
 
 <script>
   import { requestLogin } from '../api/api';
+  import {strEnc,key1, key2, key3} from '../common/js/des'
+  import {validateLogin} from '../common/js/validateStatus'
+  import {app} from '../main'
   //import NProgress from 'nprogress'
   export default {
     data() {
       return {
         logining: false,
         ruleForm2: {
-          account: 'admin',
-          checkPass: '123456'
+          account: '',
+          checkPass: ''
         },
         rules2: {
           account: [
@@ -48,22 +51,28 @@
         this.$refs.ruleForm2.validate((valid) => {
           if (valid) {
             //_this.$router.replace('/table');
-            this.logining = true;
+            _this.logining = true;
             //NProgress.start();
-            var loginParams = { username: this.ruleForm2.account, password: this.ruleForm2.checkPass };
+            
+            var loginParams = { user: strEnc(_this.ruleForm2.account,key1, key2, key3), password: strEnc(_this.ruleForm2.checkPass,key1, key2, key3) };
             requestLogin(loginParams).then(data => {
               this.logining = false;
               //NProgress.done();
-              let { msg, code, user } = data;
-              if (code !== 200) {
+              console.log('this.$router',this.$router);
+              let { result } = data;
+              if (result !== 'success') {
                 this.$message({
-                  message: msg,
+                  message: '登录失败!',
                   type: 'error'
                 });
               } else {
-                sessionStorage.setItem('user', JSON.stringify(user));
-                this.$router.push({ path: '/user' });
+                sessionStorage.setItem('user', JSON.stringify(result));
+                this.$router.push({ path: '/YDManager' });
               }
+            }).catch(data=>{
+              console.log(data);
+              // sessionStorage.setItem('user', JSON.stringify({}));
+              // this.$router.push({ path: '/YDManager/user' });
             });
           } else {
             console.log('error submit!!');
