@@ -2,7 +2,7 @@ require('./check-versions')()
 
 process.env.NODE_ENV = 'production'
 
-var ora = require('ora')
+var ora = require('ora') //cli 提示
 var rm = require('rimraf')
 var path = require('path')
 var chalk = require('chalk')

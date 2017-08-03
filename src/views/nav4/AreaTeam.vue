@@ -1,9 +1,30 @@
 <template>
 	<div>
 		<div style="text-align:right;margin-bottom: 20px; margin-top: 20px; ">
-			<el-button
-			type="primary"
-			@click="newAreaTeam = true">新增区域组</el-button>
+
+
+
+      <el-row align="middle" type="flex">
+        <el-col :span="3" :offset="10"><el-input icon="search" type="search" 
+        v-model="searchId" 
+        placeholder="请输入ID"
+        ></el-input></el-col>
+        <el-col :span="2"  style="text-align:center;"> AND </el-col>
+        <el-col :span="3">
+          <el-input icon="search" type="search" 
+          v-model="searchName" 
+          placeholder="请输入名称"
+        ></el-input></el-col>
+        <el-col :span="2">
+        <el-button type="primary"
+        @click="queryTableDate">搜索</el-button></el-col>
+        <el-col :span="3">
+        <el-button
+        type="primary"
+        @click="newAreaTeam = true">新增区域组</el-button></el-col>
+      </el-row> 
+
+
 		</div>
 		<el-table
 		:data="tableData">
@@ -41,7 +62,6 @@ layout="prev, pager, next"
     <el-form-item label="区域组名称">
     	<el-input v-model="newData.name"></el-input>
     </el-form-item>
-    >
   </el-form>
   <div slot="footer" class="dialog-footer">
     <el-button @click="handleCancelnewAreaTeam">取 消</el-button>
@@ -53,7 +73,7 @@ layout="prev, pager, next"
 <el-dialog title="编辑区域组" :visible.sync="editAreaTeam">
   <el-form :model="editData" label-position="left" label-width="80px">
     <el-form-item label="ID">
-      <el-input v-model="editData.id" readonly="true"></el-input>
+      <el-input v-model="editData.id" :readonly="true"></el-input>
     </el-form-item>
     <el-form-item label="区域组名称">
     	<el-input v-model="editData.name"></el-input>
@@ -69,7 +89,7 @@ layout="prev, pager, next"
 <el-dialog title="删除区域组" :visible.sync="deleteAreaTeam">
   <el-form :model="deleteData" label-position="left" label-width="100px">
     <el-form-item label="用户ID">
-      <el-input v-model="deleteData.id" readonly="true"></el-input>
+      <el-input v-model="deleteData.id" :readonly="true"></el-input>
     </el-form-item>
     <el-form-item label="请输入密码">
       <el-input v-model="deleteData.password"></el-input>
@@ -111,9 +131,15 @@ layout="prev, pager, next"
         totalPages: 1,
         pageSize: 10,
         nowPage: 1,
+        searchId: '',
+        searchName: '',
       }
 		},
 		methods: {
+      queryTableDate(){
+        let query = {id:this.searchId, name: this.searchName};
+        this.getAreaTeams(query);
+      },
       handleCurrentChange(val){
         this.tableData = this.sourceData.slice((val-1)*this.pageSize, val*this.pageSize);
         console.log(this.tableData);
@@ -234,9 +260,9 @@ layout="prev, pager, next"
           }
         });
       },
-      getAreaTeams(){
+      getAreaTeams(param){
         let self = this;
-        getAreaTeam().then(function (data) {
+        getAreaTeam(param).then(function (data) {
           if(!validateLogin(data.data.result)){
             self.$router.push({ path: '/YDManager/login' });
             return;

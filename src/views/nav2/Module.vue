@@ -1,9 +1,34 @@
 <template>
 	<div>
 		<div style="text-align:right;margin-bottom: 20px; margin-top: 20px; ">
-			<el-button
-			type="primary"
-			@click="newModule = true">新增模块</el-button>
+      <el-row align="middle" type="flex">
+        <el-col :span="3" :offset="5"><el-input icon="search" type="search" 
+        v-model="searchId" 
+        placeholder="请输入ID"
+        ></el-input></el-col>
+        <el-col :span="2"  style="text-align:center;"> AND </el-col>
+        <el-col :span="4">
+          <el-input icon="search" type="search" 
+          v-model="searchName" 
+          placeholder="请输入名称"
+        ></el-input></el-col>
+        <el-col :span="2"  style="text-align:center;"> AND </el-col>
+        <el-col :span="4">
+          <el-input icon="search" type="search" 
+          v-model="searchFatherId" 
+          placeholder="请输入父模块ID"
+        ></el-input></el-col>
+        <el-col :span="2">
+        <el-button type="primary"
+        @click="queryTableDate">搜索</el-button></el-col>
+        <el-col :span="3">
+        <el-button
+        type="primary"
+        @click="newModule = true">新增模块</el-button></el-col>
+      </el-row>
+
+
+			
 		</div>
 		<el-table
 		:data="tableData">
@@ -48,7 +73,10 @@
 </el-table>
 <el-pagination
 layout="prev, pager, next"
-:total="30"></el-pagination>
+:page-size="pageSize"
+:current-page.sync="nowPage"
+@current-change="handleCurrentChange"
+:total="totalPages"></el-pagination>
 
 <el-dialog title="新建模块" :visible.sync="newModule">
   <el-form :model="newData" label-position="left" label-width="80px">
@@ -79,8 +107,8 @@ layout="prev, pager, next"
     </el-form-item>
     <el-form-item label="是否有子模块">
       <el-select v-model="newData.hasSub" placeholder="请选择">
-        <el-option label="有效" value="0"></el-option>
-        <el-option label="无效" value="1"></el-option>
+        <el-option label="有" value="0"></el-option>
+        <el-option label="无" value="1"></el-option>
       </el-select>
     </el-form-item>
   </el-form>
@@ -94,7 +122,7 @@ layout="prev, pager, next"
 <el-dialog title="编辑模块" :visible.sync="editModule">
   <el-form :model="editData" label-position="left" label-width="80px">
     <el-form-item label="ID">
-      <el-input v-model="editData.id" readonly="true" ></el-input>
+      <el-input v-model="editData.id" :readonly="true" ></el-input>
     </el-form-item>
     <el-form-item label="名称">
     	<el-input v-model="editData.name"></el-input>
@@ -136,10 +164,10 @@ layout="prev, pager, next"
 <el-dialog title="删除模块" :visible.sync="deleteModule">
   <el-form :model="deleteData" label-position="left" label-width="100px">
     <el-form-item label="ID">
-      <el-input v-model="deleteData.id" readonly="true"></el-input>
+      <el-input v-model="deleteData.id" :readonly="true"></el-input>
     </el-form-item>
     <el-form-item label="请输入密码">
-      <el-input v-model="deleteData.fatherId"></el-input>
+      <el-input v-model="deleteData.password"></el-input>
     </el-form-item>
   </el-form>
   <div slot="footer" class="dialog-footer">
@@ -159,7 +187,7 @@ layout="prev, pager, next"
 		data(){
 			return {
 				tableData: [
-				  {id: '', name: '', fatherId: '', htmlPath: '', iconPath: '', type: '', priority: '', hasSub: '', }
+				  // {id: '', name: '', fatherId: '', htmlPath: '', iconPath: '', type: '', priority: '', hasSub: '', }
 				],
         sourceData: [],
         newData: {
@@ -178,9 +206,17 @@ layout="prev, pager, next"
         totalPages: 1,
         pageSize: 10,
         nowPage: 1,
+        searchId: '',
+        searchName: '',
+        searchFatherId: ''
+
 			}
 		},
 		methods: {
+      queryTableDate(){
+        let query = {id:this.searchId, name: this.searchName, fatherId: this.searchFatherId};
+        this.getModules(query);
+      },
       handleCurrentChange(val){
         this.tableData = this.sourceData.slice((val-1)*this.pageSize, val*this.pageSize);
         console.log(this.tableData);
@@ -193,7 +229,7 @@ layout="prev, pager, next"
       handleDelete( index, rowData) {
         console.log(index, rowData);
         this.deleteData = _.clone(rowData);
-        this.deleteData.password = '';
+        this.$set(this.deleteData, 'password','');
         this.deleteRow = index;
         this.deleteModule = true; 
       },
@@ -303,9 +339,9 @@ layout="prev, pager, next"
           }
         });
       },
-      getModules(){
+      getModules(param){
         let self = this;
-        getModule().then(function (data) { 
+        getModule(param).then(function (data) { 
           if(!validateLogin(data.data.result)){
             self.$router.push({ path: '/YDManager/login' });
             return;

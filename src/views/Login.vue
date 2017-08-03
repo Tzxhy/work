@@ -26,7 +26,7 @@
       return {
         logining: false,
         ruleForm2: {
-          account: '',
+          account: 'admin',
           checkPass: ''
         },
         rules2: {
@@ -67,7 +67,7 @@
                 });
               } else {
                 sessionStorage.setItem('user', JSON.stringify(result));
-                this.$router.push({ path: '/YDManager' });
+                this.$router.push({ path: '/YDManager/user' });
               }
             }).catch(data=>{
               console.log(data);

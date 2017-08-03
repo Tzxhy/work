@@ -1,7 +1,18 @@
 import axios from 'axios';
+// import routes from '../routes';
+// import validateLogin from '../common/js/validateStatus';
 
 let base = '/YDManager';
-
+// axios.interceptors.response.use(function (res) {
+//     console.log('拦截到响应!!登录验证中---若失败,则跳转至登录界面!!!');
+//     if (_.get(res,'data.result') && !validateLogin(_.get(res,'data.result'))){
+//     	routes.push({ path: '/YDManager/login' });
+//     }
+//     return res;
+//   }, function (error) {
+//     console.log("拦截错误");
+//     return Promise.reject(error);
+//   });
 export const requestLogin = params => { return axios.get(`${base}/login.do`, { params: params }).then(res => res.data); };
 export const requestLoginOut = params => { return axios.get(`${base}/logout.do`).then(res => res.data); };
 
@@ -48,3 +59,15 @@ export const addUserAreaTeam = params => { return axios.get(`${base}/addUserTeam
 export const removeUserAreaTeam = params => { return axios.get(`${base}/deleteUserTeam.do`, { params: params }); };
 export const editUserAreaTeam = params => { return axios.get(`${base}/updateUserTeam.do`, { params: params }); };
 export const getUserAreaTeam = params => { return axios.get(`${base}/getUserTeams.do`, { params: params }); };
+
+
+export const addRequest = params => { return axios.get(`${base}/addAction.do`, { params: params }); };
+export const removeRequest = params => { return axios.get(`${base}/deleteAction.do`, { params: params }); };
+export const editRequest = params => { return axios.get(`${base}/updateAction.do`, { params: params }); };
+export const getRequest = params => { return axios.get(`${base}/getActions.do`, { params: params }); };
+
+
+export const addModuleAction = params => { return axios.get(`${base}/addModuleAction.do`, { params: params }); };
+export const removeModuleAction = params => { return axios.get(`${base}/deleteModuleAction.do`, { params: params }); };
+export const editModuleAction = params => { return axios.get(`${base}/updateModuleAction.do`, { params: params }); };
+export const getModuleAction = params => { return axios.get(`${base}/getModuleActions.do`, { params: params }); };

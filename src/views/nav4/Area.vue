@@ -1,9 +1,34 @@
 <template>
 	<div>
 		<div style="text-align:right;margin-bottom: 20px; margin-top: 20px; ">
-			<el-button
-			type="primary"
-			@click="newArea = true">新增区域</el-button>
+
+      <el-row align="middle" type="flex">
+        <el-col :span="3" :offset="7"><el-input icon="search" type="search" 
+        v-model="searchId" 
+        placeholder="请输入ID"
+        ></el-input></el-col>
+        <el-col :span="2"  style="text-align:center;"> AND </el-col>
+        <el-col :span="5">
+          <el-input icon="search" type="search" 
+          v-model="searchFatherId" 
+          placeholder="请输入父区域Id"
+        ></el-input></el-col>
+        <el-col :span="2"  style="text-align:center;"> AND </el-col>
+        <el-col :span="4">
+          <el-input icon="search" type="search" 
+          v-model="searchName" 
+          placeholder="请输入名称"
+        ></el-input></el-col>
+        <el-col :span="2">
+        <el-button type="primary"
+        @click="queryTableDate">搜索</el-button></el-col>
+        <el-col :span="3">
+        <el-button
+        type="primary"
+        @click="newArea = true">新增区域</el-button></el-col>
+      </el-row>
+
+
 		</div>
 		<el-table
     style="width: 100%"
@@ -27,7 +52,7 @@
   fixed="left"
 	prop="id"></el-table-column>
   <el-table-column
-  label="父区域名称"
+  label="父区域ID"
   fixed="left"
   width="120"
   prop="fatherId"></el-table-column>
@@ -71,7 +96,7 @@ layout="prev, pager, next"
     <el-form-item label="ID">
       <el-input v-model="newData.id" type="number"></el-input>
     </el-form-item>
-    <el-form-item label="父区域名称">
+    <el-form-item label="父区域ID">
     	<el-input v-model="newData.fatherId" type="number"></el-input>
     </el-form-item>
     <el-form-item label="区域名称">
@@ -106,9 +131,9 @@ layout="prev, pager, next"
 <el-dialog title="编辑区域" :visible.sync="editArea">
   <el-form :model="editData" label-position="left" label-width="120px">
     <el-form-item label="ID">
-      <el-input v-model="editData.id" readonly="true"></el-input>
+      <el-input v-model="editData.id" :readonly="true"></el-input>
     </el-form-item>
-    <el-form-item label="父区域名称">
+    <el-form-item label="父区域ID">
       <el-input v-model="editData.fatherId" type="number"></el-input>
     </el-form-item>
     <el-form-item label="区域名称">
@@ -143,7 +168,7 @@ layout="prev, pager, next"
 <el-dialog title="删除区域" :visible.sync="deleteArea">
   <el-form :model="deleteData" label-position="left" label-width="100px">
     <el-form-item label="ID">
-      <el-input v-model="deleteData.id" readonly="true"></el-input>
+      <el-input v-model="deleteData.id" :readonly="true"></el-input>
     </el-form-item>
     <el-form-item label="请输入密码">
       <el-input v-model="deleteData.password"></el-input>
@@ -185,9 +210,16 @@ layout="prev, pager, next"
         totalPages: 1,
         pageSize: 10,
         nowPage: 1,
+        searchId: '',
+        searchFatherId: '',
+        searchName: '',
       }
 		},
 		methods: {
+      queryTableDate(){
+        let query = {id:this.searchId, name: this.searchName, fatherId: this.searchFatherId};
+        this.getAreas(query);
+      },
       handleCurrentChange(val){
         this.tableData = this.sourceData.slice((val-1)*this.pageSize, val*this.pageSize);
         console.log(this.tableData);
@@ -308,9 +340,9 @@ layout="prev, pager, next"
           }
         });
       },
-      getAreas(){
+      getAreas(param){
         let self = this;
-        getArea().then(function (data) {
+        getArea(param).then(function (data) {
           if(!validateLogin(data.data.result)){
             self.$router.push({ path: '/YDManager/login' });
             return;

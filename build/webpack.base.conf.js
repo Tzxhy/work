@@ -9,7 +9,7 @@ function resolve(dir) {
 
 module.exports = {
   entry: {
-    app: './src/main.js'
+    app: './src/main.js'//相对于命令运行时的相对
   },
   output: {
     path: config.build.assetsRoot,
