@@ -308,9 +308,7 @@ layout="prev, pager, next"
       handleDeleteModule(){
         this.isDeleting = true;
         let self = this; 
-        this.deleteData.moduleId = this.deleteData.id;
-        this.deleteData.deletepwd = this.deleteData.password;
-        let password = {module: this.deleteData};
+        let password = {moduleId: this.deleteData.id, deletepwd: this.deleteData.password };
         removeModule(password).then(data=>{
           if(!validateLogin(data.data.result)){
             self.$router.push({ path: '/YDManager/login' });
