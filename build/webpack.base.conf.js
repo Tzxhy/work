@@ -12,15 +12,19 @@ module.exports = {
     app: './src/main.js'//相对于命令运行时的相对
   },
   output: {
-    path: config.build.assetsRoot,
-    filename: '[name].js',
-    publicPath: process.env.NODE_ENV === 'production'
+    path: config.build.assetsRoot,// 编译输出的静态资源根路径
+    filename: '[name].js',// 编译输出的文件名
+    publicPath: process.env.NODE_ENV === 'production'  // 正式发布环境下编译输出的上线路径的根路径
       ? config.build.assetsPublicPath
       : config.dev.assetsPublicPath
   },
   resolve: {
-    extensions: ['.js', '.vue', '.json'],
+
+    extensions: ['.js', '.vue', '.json'],// 自动补全的扩展名
+     // 不进行自动补全或处理的文件或者文件夹
+    //fallback: [path.join(__dirname, '../node_modules')],
     alias: {
+      // 默认路径代理，例如 import Vue from 'vue'，会自动到 'vue/dist/vue.common.js'中寻找
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
       'scss_vars': '@/styles/vars.scss'

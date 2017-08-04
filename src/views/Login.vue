@@ -55,6 +55,7 @@
             //NProgress.start();
             
             var loginParams = { user: strEnc(_this.ruleForm2.account,key1, key2, key3), password: strEnc(_this.ruleForm2.checkPass,key1, key2, key3) };
+            // var loginParams = { user: _this.ruleForm2.account, password:_this.ruleForm2.checkPass};
             requestLogin(loginParams).then(data => {
               this.logining = false;
               //NProgress.done();
@@ -69,11 +70,12 @@
                 sessionStorage.setItem('user', JSON.stringify(result));
                 this.$router.push({ path: '/YDManager/user' });
               }
-            }).catch(data=>{
-              console.log(data);
-              // sessionStorage.setItem('user', JSON.stringify({}));
-              // this.$router.push({ path: '/YDManager/user' });
-            });
+            })
+            // .catch(data=>{
+            //   console.log(data);
+            //   // sessionStorage.setItem('user', JSON.stringify({}));
+            //   // this.$router.push({ path: '/YDManager/user' });
+            // });
           } else {
             console.log('error submit!!');
             return false;

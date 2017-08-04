@@ -57,6 +57,7 @@
 <el-pagination
 layout="prev, pager, next"
 :page-size="pageSize"
+:current-page.sync="nowPage"
 @current-change="handleCurrentChange"
 :total="totalPages"></el-pagination>
 
@@ -153,6 +154,7 @@ layout="prev, pager, next"
       handleCurrentChange(val){
         this.tableData = this.sourceData.slice((val-1)*this.pageSize, val*this.pageSize);
         console.log(this.tableData);
+        this.nowPage = val;
       },
 			handleEdit( index, rowData) {
 				console.log(index, rowData);
@@ -277,7 +279,7 @@ layout="prev, pager, next"
           let receivedData = data.data;
           self.sourceData = receivedData;
           self.totalPages = receivedData.length; //页码
-          self.getFirstPage();
+          self.handleCurrentChange(self.nowPage);
         });
       },
       getFirstPage(){

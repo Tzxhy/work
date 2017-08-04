@@ -1,8 +1,8 @@
-require('./check-versions')()
+require('./check-versions')()// 检查 Node 和 npm 版本
 
 process.env.NODE_ENV = 'production'
 
-var ora = require('ora') //cli 提示
+var ora = require('ora') //cli 提示  一个很好看的 loading 插件
 var rm = require('rimraf')
 var path = require('path')
 var chalk = require('chalk')
@@ -10,7 +10,7 @@ var webpack = require('webpack')
 var config = require('../config')
 var webpackConfig = require('./webpack.prod.conf')
 
-var spinner = ora('building for production...')
+var spinner = ora('building for production...please be patient!')
 spinner.start()
 
 rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {

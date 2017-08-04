@@ -1,7 +1,7 @@
 import axios from 'axios';
 // import routes from '../routes';
 // import validateLogin from '../common/js/validateStatus';
-
+window.axios = axios;
 let base = '/YDManager';
 // axios.interceptors.response.use(function (res) {
 //     console.log('拦截到响应!!登录验证中---若失败,则跳转至登录界面!!!');

@@ -5,7 +5,12 @@ var config = require('../config')
 var merge = require('webpack-merge')
 var baseWebpackConfig = require('./webpack.base.conf')
 var CopyWebpackPlugin = require('copy-webpack-plugin')
+
+/* 一个可以插入 html 并且创建新的 .html 文件的插件 */
 var HtmlWebpackPlugin = require('html-webpack-plugin')
+
+/* 一个 webpack 扩展，可以提取一些代码并且将它们和文件分离开 */ 
+/* 如果我们想将 webpack 打包成一个文件 css js 分离开，那我们需要这个插件 */
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
 var OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 
@@ -20,9 +25,9 @@ var webpackConfig = merge(baseWebpackConfig, {
   },
   devtool: config.build.productionSourceMap ? '#source-map' : false,
   output: {
-    path: config.build.assetsRoot,
-    filename: utils.assetsPath('js/[name].[chunkhash].js'),
-    chunkFilename: utils.assetsPath('js/[id].[chunkhash].js')
+    path: config.build.assetsRoot,/* 编译输出目录 */
+    filename: utils.assetsPath('js/[name].[chunkhash].js'),/* 编译输出文件名 */
+    chunkFilename: utils.assetsPath('js/[id].[chunkhash].js') // 没有指定输出名的文件输出的文件名
   },
   plugins: [
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
@@ -64,6 +69,7 @@ var webpackConfig = merge(baseWebpackConfig, {
       chunksSortMode: 'dependency'
     }),
     // split vendor js into its own file
+    /* 没有指定输出文件名的文件输出的静态文件名 */
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
       minChunks: function (module, count) {
@@ -93,11 +99,13 @@ var webpackConfig = merge(baseWebpackConfig, {
     ])
   ]
 })
-
+/* 开启 gzip 的情况下使用下方的配置 */
 if (config.build.productionGzip) {
+  /* 加载 compression-webpack-plugin 插件 */
   var CompressionWebpackPlugin = require('compression-webpack-plugin')
-
+  /* 向webpackconfig.plugins中加入下方的插件 */
   webpackConfig.plugins.push(
+    /* 使用 compression-webpack-plugin 插件进行压缩 */
     new CompressionWebpackPlugin({
       asset: '[path].gz[query]',
       algorithm: 'gzip',

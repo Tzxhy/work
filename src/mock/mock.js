@@ -21,13 +21,15 @@ export default {
     });
 
     //登录
-    mock.onPost('/YDManager/login').reply(config => {
-      let {username, password} = JSON.parse(config.data);
+    mock.onGet('/YDManager/login').reply(config => {
+      console.log('config',config);
+      let {user:username, password} = config;
+      console.log(username,"user");
       return new Promise((resolve, reject) => {
         let user = null;
         setTimeout(() => {
           let hasUser = LoginUsers.some(u => {
-            if (u.username === username && u.password === password) {
+            if (u.user === username && u.password === password) {
               user = JSON.parse(JSON.stringify(u));
               user.password = undefined;
               return true;
@@ -35,6 +37,7 @@ export default {
           });
 
           if (hasUser) {
+            console.log('test');
             resolve([200, { code: 200, msg: '请求成功', user }]);
           } else {
             resolve([200, { code: 500, msg: '账号或密码错误' }]);

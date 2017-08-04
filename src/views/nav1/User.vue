@@ -269,6 +269,7 @@ layout="prev, pager, next"
       },
       handleCurrentChange(val){
         this.tableData = this.sourceData.slice((val-1)*this.pageSize, val*this.pageSize);
+        this.nowPage = val;
         console.log(this.tableData);
       },
 			handleEdit( index, rowData) {
@@ -425,8 +426,9 @@ layout="prev, pager, next"
           self.sourceData = receivedData;
           self.totalPages = receivedData.length; //页码
           // self.getFirstPage();
-          self.nowPage = 1;
-          self.handleCurrentChange(1);
+          // self.nowPage = 1;
+          // self.handleCurrentChange(1);
+          self.handleCurrentChange(self.nowPage);
           
         });
       },
