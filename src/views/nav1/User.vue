@@ -411,18 +411,19 @@ layout="prev, pager, next"
       getUsers(param){
         let self = this;
         getUser(param).then(function (data) {
-          if(!validateLogin(data.data.result)){
-            self.$router.push({ path: '/YDManager/login' });
-            return;
-          }
+          console.log('data', data);
+          // if(!validateLogin(data.data.result)){
+          //   self.$router.push({ path: '/YDManager/login' });
+          //   return;
+          // }
           console.log('getUser ',data);
-          let receivedData = data.data;
-          _.forEach(receivedData, function (value, index) {
-            receivedData[index].account = receivedData[index].userName;
-            receivedData[index].startDate = util.formatDate.format(new Date(receivedData[index].startTime),'yyyy-MM-dd hh:mm:ss');
-            receivedData[index].endDate = util.formatDate.format(new Date(receivedData[index].endTime),'yyyy-MM-dd hh:mm:ss');
+          let receivedData = data.data.user;
+          // _.forEach(receivedData, function (value, index) {
+          //   receivedData[index].account = receivedData[index].userName;
+          //   receivedData[index].startDate = util.formatDate.format(new Date(receivedData[index].startTime),'yyyy-MM-dd hh:mm:ss');
+          //   receivedData[index].endDate = util.formatDate.format(new Date(receivedData[index].endTime),'yyyy-MM-dd hh:mm:ss');
 
-          })
+          // })
           self.sourceData = receivedData;
           self.totalPages = receivedData.length; //页码
           // self.getFirstPage();

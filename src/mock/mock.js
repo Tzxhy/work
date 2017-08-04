@@ -49,8 +49,7 @@ export default {
       return new Promise((resolve, reject) => {
         let users = null;
         setTimeout(() => {
-
-          resolve([200, { code: 200, msg: '请求成功', user }]);
+          resolve([200, { code: 200, msg: '请求成功', user:_Users,data:{result: 'success'} }]);
         }, 1000);
       });
     });

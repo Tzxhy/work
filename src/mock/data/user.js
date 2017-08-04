@@ -11,14 +11,16 @@ const LoginUsers = [
 
 const Users = [];
 
-for (let i = 0; i < 86; i++) {
+for (let i = 0; i < 286; i++) {
   Users.push(Mock.mock({
-    id: Mock.Random.guid(),
+    id: Mock.Random.increment(),
+    userName:Mock.Random.increment(),
     name: Mock.Random.cname(),
-    addr: Mock.mock('@county(true)'),
-    'age|18-60': 1,
-    birth: Mock.Random.date(),
-    sex: Mock.Random.integer(0, 1)
+    password: Mock.Random.guid(),
+    role: Mock.Random.integer(0, 1, 2),
+    startDate: Mock.Random.date() ,
+    endDate: Mock.Random.date(),
+    status: Mock.Random.integer(0, 1)
   }));
 }
 
