@@ -54,20 +54,21 @@
             _this.logining = true;
             //NProgress.start();
             
-            var loginParams = { user: strEnc(_this.ruleForm2.account,key1, key2, key3), password: strEnc(_this.ruleForm2.checkPass,key1, key2, key3) };
-            // var loginParams = { user: _this.ruleForm2.account, password:_this.ruleForm2.checkPass};
+            // var loginParams = { user: strEnc(_this.ruleForm2.account,key1, key2, key3), password: strEnc(_this.ruleForm2.checkPass,key1, key2, key3) };
+            var loginParams = { user: _this.ruleForm2.account, password:_this.ruleForm2.checkPass};
             requestLogin(loginParams).then(data => {
               this.logining = false;
               //NProgress.done();
-              console.log('this.$router',this.$router);
-              let { result } = data;
-              if (result !== 'success') {
+              console.log('this',this);
+              console.log('data', data);
+              let { code, user } = data;
+              if (code !== 200 ) {
                 this.$message({
                   message: '登录失败!',
                   type: 'error'
                 });
               } else {
-                sessionStorage.setItem('user', JSON.stringify(result));
+                sessionStorage.setItem('user', JSON.stringify(user));
                 this.$router.push({ path: '/YDManager/user' });
               }
             })
