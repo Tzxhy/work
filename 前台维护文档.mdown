@@ -1,0 +1,150 @@
+
+# 后台管理系统Vue前台维护
+
+
+
+ 
+## 项目整体介绍
+&#160; &#160; &#160; &#160;该项目以[Vue](https://cn.vuejs.org/v2/guide)为前端主框架，[element-ui](http://element.eleme.io/#/zh-CN/component/installation)为组建框架，[font-awesome](http://fontawesome.dashgame.com)为字体图标库，[vue-router](https://router.vuejs.org/zh-cn/)为前端路由组件，[webpack2](http://www.css88.com/doc/webpack2/guides)为打包工具。
+项目开启方法( 首先需要安装Nodejs最新版和Git )：
+- 本地服务器方式:（方便测试逻辑）
+输入npm run dev, 即可开启本地服务
+- 打包:
+输入npm run build, 即可开始打包, 打包完成后, 将dist目录下的所有文件移动到项目下web项目路径即可.
+---
+以上2种方式, 均需在目录下(本例为webapp)， 右键， Git Bash， 输入npm i, 等待依赖包安装完成, 方可进行其他操作.
+
+## 新建主栏(子栏)
+1. 在源文件目录(webapp/src, 以下简称源目录)下的routes.js中, 按照
+```javascript
+{
+	path: '/YDManager',
+	component: Home,
+	name: '',
+	leaf: true,
+	iconCls: 'fa fa-id-card-o',
+	children: [
+	  { path: '/YDManager/module', component: Module, name: '模块' },
+	]
+},
+```
+的格式, 书写路由配置. 其中, path为tomcat分配的路径(也称为项目名), component不用修改, 若该主栏下只有一个子栏(也可以理解为该主栏没有子栏), 则需设置 leaf: true,name: '',
+
+iconCls: 'fa fa-id-card-o',为font-awesome的字体图标类名, 具体查[font-awesome](http://fontawesome.dashgame.com).
+```javascript
+children: [
+  { path: '/YDManager/module', component: Module, name: '模块' },
+]
+```
+有多少个子栏就写多少个子对象. path为分配的前台路由, component为子页面组件, name随便设.
+然后在routes.js的顶部, 用
+```javascript
+import Module from './views/nav5/Module.vue'
+//from 后面的是相对路径, 相对routes.js的相对路径
+```
+写完routes.js后不要保存(若处于本地服务器模式, 页面直接报错), 然后下一步骤.
+
+---
+2. 在源目录下的views中添加vue组件.一般在第几个主栏中, 就写在nav几中, 方便查找组件. 
+组件包含以下几个部分
+```javascript
+<template>
+</template>
+
+<script>
+</script>
+
+<style>
+</style>
+```
+其中template是模板, 参照以前写的, 大致都能懂. 不懂的查element-ui, 或者问题比较繁杂的, 可以直接问我, 我查了回复咨询人.  主要注意的是, element-ui的事件绑定, 如
+```javascript
+<el-button type="primary"
+  @click="queryTableDate">搜索</el-button>
+```
+type属性可以设置button样式, @click设置点击事件处理函数, 函数的写法:
+```javascript
+<script>
+	// from 后面的仍为相对路径, 同时声明一点, 所有api接口都应该定义在这个文件里,
+	// 需要的时候使用import引入即可.
+	import { getUser,addUser, removeUser,editUser } from '../../api/api';
+	export default {
+		data(){
+			return {
+				// 各种需要绑定的值 如
+				searchId: '',  // 见下一个代码块
+				searchUserName: '',
+				tableData: [],
+			}
+		},
+		methods: {
+			queryTableDate(){
+        let query = {id:this.searchId, userName: this.searchUserName};
+        //methods中所有直接子函数中的this都指向这个vue组件. 同时this下挂载了data, methods等属性
+        //因此可以用this.searchId 访问data中的searchId
+        //处理逻辑
+        this.getUsers(query); //按照searchId和searchUserName查找用户, 相当于访问methods.getUsers
+      },
+      getUsers(param){
+      	// 对param参数进行自定义处理
+      	//调用 api 发起请求, 
+      	let self = this; // 保存this变量(指向这个vue组件)
+      	//这个getUser为script第一行导入的api中的方法
+      	getUser(param).then(data=>{ // 箭头函数中this指向父作用域, 因此这里使用
+      															// this.searchId 是访问不到的. 可以用self.searchId访问
+      		console.log(data);
+      		/*返回数据格式:
+      		{
+  					// `data` is the response that was provided by the server 
+  					data: {},
+					  // `status` is the HTTP status code from the server response 
+					  status: 200,
+					  // `statusText` is the HTTP status message from the server response 
+					  statusText: 'OK',
+					  // `headers` the headers that the server responded with 
+					  // All header names are lower cased 
+					  headers: {},
+					  // `config` is the config that was provided to `axios` for the request 
+					  config: {},
+					  // `request` is the request that generated this response 
+					  // It is the last ClientRequest instance in node.js (in redirects) 
+					  // and an XMLHttpRequest instance the browser 
+					  request: {}
+					}*/
+      	})
+      }
+		}
+	}
+</script>
+```
+
+```javascript
+<el-input icon="search" type="search" 
+  v-model="searchId"  // 此处绑定input的值到变量searchId上, 
+      // 即当input的值改变后, 变量searchId也随之改变
+  placeholder="请输入ID"
+  ></el-input>
+```
+
+3. 在源目录下的api/api.js中添加接口, 格式仿照已有的.最后保存所有修改的即可.比如:
+```javascript
+let base = '/YDManager';// 这个为tomcat分配的名称(项目名)
+export const requestLogin = params => { return axios.get(`${base}/login.do`, { params: params }).then(res => res.data); };
+export const requestLoginOut = params => { return axios.get(`${base}/logout.do`).then(res => res.data); };
+
+```
+
+
+
+
+
+
+
+
+
+
+作者:谭智轩
+联系方式:13018287713
+QQ:1139723651
+
+

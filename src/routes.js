@@ -10,6 +10,7 @@ import ModuleAction from './views/nav3/ModuleAction.vue'
 import AreaTeam from './views/nav4/AreaTeam.vue'
 import Area from './views/nav4/Area.vue'
 import Request from './views/nav5/Request.vue'
+import Hello from './components/Hello.vue'
 
 
 
@@ -87,6 +88,15 @@ let routes = [
             { path: '/YDManager/relation-areateam', component: RelationAreaTeam, name: '区域组-区域' },
             { path: '/YDManager/user-areateam', component: UserAreaTeam, name: '用户-区域组' },
             { path: '/YDManager/module-action', component: ModuleAction, name: '模块-请求' },
+        ]
+    },{
+        path: '/YDManager',
+        component: Home,
+        name: '测试',
+        iconCls: 'fa fa-address-card',
+        // leaf: true,//只有一个节点
+        children: [
+            { path: '/YDManager/test-hello', component: Hello, name: 'Hello' },
         ]
     },
     {
